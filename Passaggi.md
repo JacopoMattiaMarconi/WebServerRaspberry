@@ -3,7 +3,7 @@ L'obiettivo finale sarà quello di creare un sito raggiungibile da remoto.<br>
 La configurazione iniziale del Raspberry verrà effettuata in maniera headless, tramite pc
 portatile e connessione SSH.<br>
 <br>
-Ingredienti:<br>
+Ingredienti:
 - router Linkem con connessione a internet<br>
 - pacchetto completo Raspberry Pi4<br>
       -scheda madre completa<br>
@@ -11,9 +11,12 @@ Ingredienti:<br>
       -ventola di raffreddamento e dissipatori<br>
       -case di protezione<br>
       -cavi di collegamento HDMI<br>
+      -micro sd almeno 8GB con adattatore per PC
 - computer portatile
 - cavo ethernet (opzionale)
+- software Rufus installato sul pc
 
+[INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
 [INSTALLAZIONE PACCHETTI NECESSARI](#INSTALLAZIONE-PACCHETTI)<br>
 [CONFIGURAZIONE DI RETE](#CONFIGURAZIONE-DI-RETE)<br>
 [CREAZIONE UTENTI](#CREAZIONE-UTENTI)<br>
@@ -22,6 +25,67 @@ Ingredienti:<br>
 [CREAZIONE FILE DI CONFIGURAZIONE DEL SITO](#CREAZIONE-FILE-DI-CONFIGURAZIONE-DEL-SITO)<br>
 [CREAZIONE SITO](#CREAZIONE-SITO)<br>
 [CONFIGURAZIONE FTP](#CONFIGURAZIONE-FTP)<br>
+
+## INSTALLAZIONE RASPBERRY PI4
+# tempo d'esecuzione: 15 min
+Una volta acquistato il Raspberry Pi4 dovremo assemblare i componenti.
+Le istruzioni contenute all'interno della scatola sono chiare e basilari. Qualora 
+non fossero presenti si possono scaricare dal sito ufficiale.<br>
+
+### CHECKPOINT :white_check_mark: <br>
+Una volta assemblato saldamento e precisamente il tutto collegare il Raspberry 
+alla rete elettrica con il relativo alimentatore e controllare che si accenda
+correttamente (la ventola a 5.1V (pin 2 e 6) sarà discretamente rumorosa).Uno dei due led diverrà rosso a conferma che la scheda è correttamente alimentata. <br>
+
+---------------------------------------------------------------------
+
+## INSTALLAZIONE RUFUS
+# tempo d'esecuzione: 5 min
+Per portare a termine il nostro progetto è necessario installare il software 
+Rufus dal sito ufficiale (https://rufus.ie/). Questa applicazione permetterà di
+creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<br>
+
+---------------------------------------------------------------------
+
+## DOWNLOAD SISTEMA OPERATIVO
+# tempo d'esecuzione: 20 min
+A questo punto sarà necessario scaricare il S.O., in questo caso Ubuntu Server 20.04.1 LTS
+(long term support) a 64 bit dal sito ufficiale (https://ubuntu.com/download/raspberry-pi).
+Una volta scaricato un file .zip con all'interno l'immagine ISO del S.O. scelto, inserire la scheda micro sd con il relativo adattatore per pc all'interno del nostro
+pc e aprire l'applicazione Rufus.
+All'interno della schermata di Rufus selezionare l'immagine ISO, cliccare AVVIO e aspettare. La scheda sd verrà formattata.<br>
+<br>
+### CHECKPOINT :white_check_mark: <br>
+Al termine del caricamento cliccare CHIUDI. Usiamo, poi, la combinazione di tasti Windows+R e scriviamo diskmgmt.msc per assicurarci che siano state create due partizioni una (BOOT) formattata FAT32, l'altra non leggibile in Windows.<br>
+<br>
+Nella finestra Questo PC di Windows, entriamo nella scheda sd e clicchiamo con il tasto destro in un'area libera della cartella, scegliamo Nuovo, Documento di testo. Assegnamo al file così creato il nome ssh assicurandovi che non sia presente l'estensione .txt<br>
+Allo stesso modo, creiamo un file wpa_supplicant.conf nella partizione BOOT inserendovi al suo interno quanto segue (può essere aperto con un qualunque editor di testo, va bene anche il Blocco Note di Windows):
+
+>country=IT
+>
+>ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+>
+>update_config=1
+>
+>
+>
+>network={
+>
+>scan_ssid=1
+>
+>ssid="SOSTITUIRE_SSID"
+>
+>psk="SOSTITUIRE_PASSWORD"
+>
+>}
+>
+
+Al posto di SOSTITUIRE_SSID, indichiamo il nome della WiFi alla quale Raspberry Pi 4 dovrà automaticamente collegarsi; la stringa SOSTITUIRE_PASSWORD va sostituita con la password corretta per l'accesso alla rete WiFi specificata. Noi per sicurezza collegheremo, comunque, il Raspberry al router tramite cavo ethernet.
+Estraiamo la scheda SD dal PC e inseriamola nello slot posto al di sotto del Raspberry Pi 4.<br>
+<br>
+Colleghiamo il cavo ethernet dal router al Raspberry, asicuriamoci che la sd sia inserita correttamente e dopo aver collegato il Raspberry alla rete elettrica aspettiamo qualche secondo.
+
+---------------------------------------------------------------------
 
 ## INSTALLAZIONE PACCHETTI :bust_in_silhouette: Admin
 :warning: pacchetto APACHE2 per scaricare server APACHE2 con FileZilla<br>
