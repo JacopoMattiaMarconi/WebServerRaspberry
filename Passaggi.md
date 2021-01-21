@@ -15,6 +15,7 @@ Ingredienti:
 - computer portatile
 - cavo ethernet (opzionale)
 - software Rufus installato sul pc
+- software Putty installato sul pc
 
 [INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
 [INSTALLAZIONE PACCHETTI NECESSARI](#INSTALLAZIONE-PACCHETTI)<br>
@@ -83,8 +84,16 @@ Allo stesso modo, creiamo un file wpa_supplicant.conf nella partizione BOOT inse
 Al posto di SOSTITUIRE_SSID, indichiamo il nome della WiFi alla quale Raspberry Pi 4 dovrà automaticamente collegarsi; la stringa SOSTITUIRE_PASSWORD va sostituita con la password corretta per l'accesso alla rete WiFi specificata. Noi per sicurezza collegheremo, comunque, il Raspberry al router tramite cavo ethernet.
 Estraiamo la scheda SD dal PC e inseriamola nello slot posto al di sotto del Raspberry Pi 4.<br>
 <br>
-Colleghiamo il cavo ethernet dal router al Raspberry, asicuriamoci che la sd sia inserita correttamente e dopo aver collegato il Raspberry alla rete elettrica aspettiamo qualche secondo.
+Colleghiamo il cavo ethernet dal router al Raspberry, assicuriamoci che la sd sia inserita correttamente e dopo aver collegato il Raspberry alla rete elettrica aspettiamo qualche secondo.
+<br>
+Per accedere alla sessmione ssh è necessario sapere l'indirizzo IP privato assegnato dal router al Raspberry Pi4. Per conoscere l'indirizzo IP digitare sul browser del proprio pc 192.168.1.1 e accedere con le credenziali (se non è mai stato effetuato l'accesso cercare sul browser "user e password router linkem"). Nella sezione network del menù, all'interno di Stato, scorrendo in fondo alla pagina sarà visibile l'indirizzo IP del Raspberry (il seguente record potrebbe avere "ubuntu" come nome host).<br>
+Venuti a conoscenza dell'ip del raspberry entrare su Putty, scaricabile dal sito ufficiale (https://www.putty.org/) e digitare l'ip nella relativa casella, e verificare che la porta sia la "22". <br>
+Al primo accesso verrà richiesto username e password (inserire "ubuntu" sia come password che come username). Verrà poi richiesto all'utente di inserire una password personale per l'accesso. Consigliamo di cambiare hostname con il comando:<br>
 
+>sudo hostnamectl set-hostname nomepc
+> 
+>sudo reboot
+>
 ---------------------------------------------------------------------
 
 ## INSTALLAZIONE PACCHETTI :bust_in_silhouette: Admin
