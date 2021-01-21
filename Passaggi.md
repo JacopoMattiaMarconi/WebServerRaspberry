@@ -5,12 +5,13 @@ portatile e connessione SSH.<br>
 <br>
 Ingredienti:<br>
 - router Linkem con connessione a internet<br>
-- pacchetto completo Raspberry Pi4
-      -alimentatore 15W circa (5.1V o 3.3V)
-      -scheda madre completa
-      -ventola di raffreddamento e dissipatori
-      -case di protezione
-      -cavi di collegamento HDMI
+- pacchetto completo Raspberry Pi4<br>
+
+      -scheda madre completa<br>
+      -alimentatore 15W circa (5.1V o 3.3V)<br>
+      -ventola di raffreddamento e dissipatori<br>
+      -case di protezione<br>
+      -cavi di collegamento HDMI<br>
 - computer portatile
 - cavo ethernet (opzionale)
 
