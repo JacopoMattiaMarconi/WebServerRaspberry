@@ -28,7 +28,7 @@ Ingredienti:
 [CONFIGURAZIONE FTP](#CONFIGURAZIONE-FTP)<br>
 
 ## INSTALLAZIONE RASPBERRY PI4
-# tempo d'esecuzione: 15 min
+### tempo d'esecuzione: 15 min
 Una volta acquistato il Raspberry Pi4 dovremo assemblare i componenti.
 Le istruzioni contenute all'interno della scatola sono chiare e basilari. Qualora 
 non fossero presenti si possono scaricare dal sito ufficiale.<br>
@@ -41,7 +41,7 @@ correttamente (la ventola a 5.1V (pin 2 e 6) sarà discretamente rumorosa).Uno d
 ---------------------------------------------------------------------
 
 ## INSTALLAZIONE RUFUS
-# tempo d'esecuzione: 5 min
+### tempo d'esecuzione: 5 min
 Per portare a termine il nostro progetto è necessario installare il software 
 Rufus dal sito ufficiale (https://rufus.ie/). Questa applicazione permetterà di
 creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<br>
@@ -49,7 +49,11 @@ creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<
 ---------------------------------------------------------------------
 
 ## CERTIFICATO SSL
-# tempo d'esecuzione: 15 min
+### tempo d'esecuzione: 15 min
+Il certificato SSL ci permetterà di avere un sito considerato protetto tramite la creazione di un certificato SSL
+che verrà rinnovato automaticamente. 
+Per il nostro certificato SSL useremo i comandi di Certbot lets-encrypt dal sito ufficiale https://certbot.eff.org/lets-encrypt/ubuntufocal-apache.html. <br>
+
 >sudo apt-get update
 >
 >sudo apt-get install snapd
@@ -119,7 +123,7 @@ creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<
 ---------------------------------------------------------------------
 
 ## DOWNLOAD SISTEMA OPERATIVO
-# tempo d'esecuzione: 20 min
+### tempo d'esecuzione: 20 min
 A questo punto sarà necessario scaricare il S.O., in questo caso Ubuntu Server 20.04.1 LTS
 (long term support) a 64 bit dal sito ufficiale (https://ubuntu.com/download/raspberry-pi).
 Una volta scaricato un file .zip con all'interno l'immagine ISO del S.O. scelto, inserire la scheda micro sd con il relativo adattatore per pc all'interno del nostro
@@ -132,24 +136,15 @@ Al termine del caricamento cliccare CHIUDI. Usiamo, poi, la combinazione di tast
 Nella finestra Questo PC di Windows, entriamo nella scheda sd e clicchiamo con il tasto destro in un'area libera della cartella, scegliamo Nuovo, Documento di testo. Assegnamo al file così creato il nome ssh assicurandovi che non sia presente l'estensione .txt<br>
 Allo stesso modo, creiamo un file wpa_supplicant.conf nella partizione BOOT inserendovi al suo interno quanto segue (può essere aperto con un qualunque editor di testo, va bene anche il Blocco Note di Windows):
 
->country=IT
+>           country=IT
+>           ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+>           update_config=1
 >
->ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
->
->update_config=1
->
->
->
->network={
->
->scan_ssid=1
->
->ssid="SOSTITUIRE_SSID"
->
->psk="SOSTITUIRE_PASSWORD"
->
->}
->
+>           network={
+>           scan_ssid=1
+>           ssid="SOSTITUIRE_SSID"
+>           psk="SOSTITUIRE_PASSWORD"
+>           }
 
 Al posto di SOSTITUIRE_SSID, indichiamo il nome della WiFi alla quale Raspberry Pi 4 dovrà automaticamente collegarsi; la stringa SOSTITUIRE_PASSWORD va sostituita con la password corretta per l'accesso alla rete WiFi specificata. Noi per sicurezza collegheremo, comunque, il Raspberry al router tramite cavo ethernet.
 Estraiamo la scheda SD dal PC e inseriamola nello slot posto al di sotto del Raspberry Pi 4.<br>
@@ -207,7 +202,6 @@ controllare connettività dopo aver installato APACHE2
 Per accettare configurazione appena impostata: <br>
 >sudo netplan try
 
->
 >     [sudo] password for adminuser:
 >     Warning: Stopping systemd-networkd.service, but it can still be activated by:
 >       systemd-networkd.socket
@@ -219,7 +213,6 @@ Per accettare configurazione appena impostata: <br>
 >
 >     Changes will revert in 119 seconds
 >     Configuration accepted.
->
 
 ### CHECKPOINT :white_check_mark: <br>
 controllare corretta configurazione di rete: <br>
