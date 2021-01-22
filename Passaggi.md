@@ -48,6 +48,57 @@ creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<
 
 ---------------------------------------------------------------------
 
+## CERTIFICATO SSL
+# tempo d'esecuzione: 15 min
+>sudo apt-get update
+>
+>sudo apt-get install snapd
+>
+>sudo snap install core
+>
+>sudo snap refresh core
+>
+>sudo snap install --classic certbot
+>
+>sudo ln -s /snap/bin/certbot /usr/bin/certbot
+>
+>sudo certbot --apache
+>
+>sudo nano /etc/apache2/sites-enabled/000-default.conf
+
+
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        Redirect / https://www.waltermarconi.it
+        ErrorLog /var/www/MarconiWalter/log/error.log
+        CustomLog /var/www/MarconiWalter/log/access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =waltermarconi.it
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/MarconiWalter/web
+        SSLEngine on
+        ServerName waltermarconi.it
+SSLCertificateFile /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
+SSLCertificateKeyFile /etc/letsencrypt/live/waltermarconi.it/privkey.pem
+Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>
+
+
+>sudo certbot --apache
+>
+>sudo certbot renew --dry-run
+>
+>
+>
+
+---------------------------------------------------------------------
+
 ## DOWNLOAD SISTEMA OPERATIVO
 # tempo d'esecuzione: 20 min
 A questo punto sarà necessario scaricare il S.O., in questo caso Ubuntu Server 20.04.1 LTS
@@ -121,17 +172,18 @@ controllare connettività dopo aver installato APACHE2
 
 >cd /etc/netplan/00-installer-config.yaml
 
->
->     network:
->       ethernets:
->         enp0s3:
->           addresses: [172.16.29.113/16]
->           gateway4: 172.16.1.7
->           nameservers:
->             search: [virtual.marconi]
->             addresses: [172.16.1.18, 172.16.1.10] 
->       version: 2
->
+
+>           network:
+>                 ethernets:
+>                       eth0:
+>                              dhcp4: false
+>                              optional: false
+>                              addresses: [192.168.1.2/24]
+>                              gateway4: 192.168.1.1
+>                              nameservers:
+>                              addresses: [8.8.8.8, 8.8.4.4]
+>                 version: 2
+
 
 Per accettare configurazione appena impostata: <br>
 >sudo netplan try
