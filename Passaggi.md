@@ -4,13 +4,13 @@ La configurazione iniziale del Raspberry verrà effettuata in maniera headless, 
 portatile e connessione SSH.<br>
 <br>
 Per questo progetto abbiamo bisogno di:
->            router Linkem con connessione a internet<br>
->            pacchetto completo Raspberry Pi4<br>
->                  scheda madre completa<br>
->                  alimentatore 15W circa (5.1V o 3.3V)<br>
->                  ventola di raffreddamento e dissipatori<br>
->                  case di protezione<br>
->                  cavi di collegamento HDMI<br>
+>            router Linkem con connessione a internet
+>            pacchetto completo Raspberry Pi4
+>                  scheda madre completa
+>                  alimentatore 15W circa (5.1V o 3.3V)
+>                  ventola di raffreddamento e dissipatori
+>                  case di protezione
+>                  cavi di collegamento HDMI
 >                  micro sd almeno 8GB con adattatore per PC
 >            computer portatile
 >            cavo ethernet (opzionale)
