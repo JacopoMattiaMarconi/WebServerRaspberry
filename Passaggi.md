@@ -67,35 +67,54 @@ creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<
 >sudo nano /etc/apache2/sites-enabled/000-default.conf
 
 
-<VirtualHost *:80>
-        ServerAdmin webmaster@localhost
-        Redirect / https://www.waltermarconi.it
-        ErrorLog /var/www/MarconiWalter/log/error.log
-        CustomLog /var/www/MarconiWalter/log/access.log combined
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-RewriteEngine on
-RewriteCond %{SERVER_NAME} =waltermarconi.it
-RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
-</VirtualHost>
-
-<VirtualHost *:443>
-        ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/MarconiWalter/web
-        SSLEngine on
-        ServerName waltermarconi.it
-SSLCertificateFile /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
-SSLCertificateKeyFile /etc/letsencrypt/live/waltermarconi.it/privkey.pem
-Include /etc/letsencrypt/options-ssl-apache.conf
-</VirtualHost>
+>            <VirtualHost *:80>
+>                    ServerAdmin webmaster@localhost
+>                    Redirect / https://www.waltermarconi.it
+>                    ErrorLog /var/www/MarconiWalter/log/error.log
+>                    CustomLog /var/www/MarconiWalter/log/access.log combined
+>                    ErrorLog ${APACHE_LOG_DIR}/error.log
+>                    CustomLog ${APACHE_LOG_DIR}/access.log combined
+>            RewriteEngine on
+>            RewriteCond %{SERVER_NAME} =waltermarconi.it
+>            RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+>            </VirtualHost>
+>
+>            <VirtualHost *:443>
+>                    ServerAdmin webmaster@localhost
+>                    DocumentRoot /var/www/MarconiWalter/web
+>                    SSLEngine on
+>                    ServerName waltermarconi.it
+>            SSLCertificateFile /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
+>            SSLCertificateKeyFile /etc/letsencrypt/live/waltermarconi.it/privkey.pem
+>            Include /etc/letsencrypt/options-ssl-apache.conf
+>            </VirtualHost>
 
 
 >sudo certbot --apache
 >
 >sudo certbot renew --dry-run
 >
+
+
+>            Processing /etc/letsencrypt/renewal/waltermarconi.it.conf
+>            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+>            Cert not due for renewal, but simulating renewal for dry run
+>            Plugins selected: Authenticator apache, Installer apache
+>            Simulating renewal of an existing certificate for waltermarconi.it
+>            Performing the following challenges:
+>            http-01 challenge for waltermarconi.it
+>            Waiting for verification...
+>            Cleaning up challenges
 >
+>            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+>            new certificate deployed with reload of apache server; fullchain is
+>            /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
+>            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 >
+>            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+>            Congratulations, all simulated renewals succeeded:
+>              /etc/letsencrypt/live/waltermarconi.it/fullchain.pem (success)
+
 
 ---------------------------------------------------------------------
 
