@@ -31,6 +31,7 @@ Per questo progetto abbiamo bisogno di:
 [CERTIFICATO SSL](#CERTIFICATO-SSL)<br>
 [CONFIGURAZIONE FTP](#CONFIGURAZIONE-FTP)<br>
 
+
 ## INSTALLAZIONE RASPBERRY PI4
 ### tempo d'esecuzione: 15 min
 Una volta acquistato il Raspberry Pi4 dovremo assemblare i componenti.
