@@ -3,21 +3,23 @@ L'obiettivo finale sarà quello di creare un sito raggiungibile da remoto.<br>
 La configurazione iniziale del Raspberry verrà effettuata in maniera headless, tramite pc
 portatile e connessione SSH.<br>
 <br>
-Ingredienti:
-- router Linkem con connessione a internet<br>
-- pacchetto completo Raspberry Pi4<br>
-      -scheda madre completa<br>
-      -alimentatore 15W circa (5.1V o 3.3V)<br>
-      -ventola di raffreddamento e dissipatori<br>
-      -case di protezione<br>
-      -cavi di collegamento HDMI<br>
-      -micro sd almeno 8GB con adattatore per PC
-- computer portatile
-- cavo ethernet (opzionale)
-- software Rufus installato sul pc
-- software Putty installato sul pc
+Per questo progetto abbiamo bisogno di:
+>            router Linkem con connessione a internet<br>
+>            pacchetto completo Raspberry Pi4<br>
+>                  scheda madre completa<br>
+>                  alimentatore 15W circa (5.1V o 3.3V)<br>
+>                  ventola di raffreddamento e dissipatori<br>
+>                  case di protezione<br>
+>                  cavi di collegamento HDMI<br>
+>                  micro sd almeno 8GB con adattatore per PC
+>            computer portatile
+>            cavo ethernet (opzionale)
+>            software Rufus installato sul pc
+>            software Putty installato sul pc
 
 [INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
+[INSTALLAZIONE RUFUS](#INSTALLAZIONE-RUFUS)<br>
+[DOWNLOAD SISTEMA OPERATIVO](#DOWNLOAD-SISTEMA-OPERATIVO)<br>
 [INSTALLAZIONE PACCHETTI NECESSARI](#INSTALLAZIONE-PACCHETTI)<br>
 [CONFIGURAZIONE DI RETE](#CONFIGURAZIONE-DI-RETE)<br>
 [CREAZIONE UTENTI](#CREAZIONE-UTENTI)<br>
@@ -25,6 +27,7 @@ Ingredienti:
 [CONTROLLO FILE APACHE2](#CONTROLLO-FILE-APACHE2)<br>
 [CREAZIONE FILE DI CONFIGURAZIONE DEL SITO](#CREAZIONE-FILE-DI-CONFIGURAZIONE-DEL-SITO)<br>
 [CREAZIONE SITO](#CREAZIONE-SITO)<br>
+[CERTIFICATO SSL](#CERTIFICATO-SSL)<br>
 [CONFIGURAZIONE FTP](#CONFIGURAZIONE-FTP)<br>
 
 ## INSTALLAZIONE RASPBERRY PI4
@@ -33,7 +36,7 @@ Una volta acquistato il Raspberry Pi4 dovremo assemblare i componenti.
 Le istruzioni contenute all'interno della scatola sono chiare e basilari. Qualora 
 non fossero presenti si possono scaricare dal sito ufficiale.<br>
 
-### CHECKPOINT :white_check_mark: <br>
+### checkpoint :white_check_mark: <br>
 Una volta assemblato saldamento e precisamente il tutto collegare il Raspberry 
 alla rete elettrica con il relativo alimentatore e controllare che si accenda
 correttamente (la ventola a 5.1V (pin 2 e 6) sarà discretamente rumorosa).Uno dei due led diverrà rosso a conferma che la scheda è correttamente alimentata. <br>
@@ -47,6 +50,235 @@ Rufus dal sito ufficiale (https://rufus.ie/). Questa applicazione permetterà di
 creare un supporto di memoria esterna contentente un ISO avviabile tramite BOOT<br>
 
 ---------------------------------------------------------------------
+
+## DOWNLOAD SISTEMA OPERATIVO
+### tempo d'esecuzione: 20 min
+A questo punto sarà necessario scaricare il S.O., in questo caso Ubuntu Server 20.04.1 LTS
+(long term support) a 64 bit dal sito ufficiale (https://ubuntu.com/download/raspberry-pi).
+Una volta scaricato un file .zip con all'interno l'immagine ISO del S.O. scelto, inserire la scheda micro sd con il relativo adattatore per pc all'interno del nostro
+pc e aprire l'applicazione Rufus.
+All'interno della schermata di Rufus selezionare l'immagine ISO, cliccare AVVIO e aspettare. La scheda sd verrà formattata.<br>
+<br>
+### CHECKPOINT :white_check_mark: <br>
+Al termine del caricamento cliccare CHIUDI. Usiamo, poi, la combinazione di tasti Windows+R e scriviamo diskmgmt.msc per assicurarci che siano state create due partizioni una (BOOT) formattata FAT32, l'altra non leggibile in Windows.<br>
+<br>
+Nella finestra Questo PC di Windows, entriamo nella scheda sd e clicchiamo con il tasto destro in un'area libera della cartella, scegliamo Nuovo, Documento di testo. Assegnamo al file così creato il nome ssh assicurandovi che non sia presente l'estensione .txt<br>
+Allo stesso modo, creiamo un file wpa_supplicant.conf nella partizione BOOT inserendovi al suo interno quanto segue (può essere aperto con un qualunque editor di testo, va bene anche il Blocco Note di Windows):
+
+>           country=IT
+>           ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+>           update_config=1
+>
+>           network={
+>           scan_ssid=1
+>           ssid="SOSTITUIRE_SSID"
+>           psk="SOSTITUIRE_PASSWORD"
+>           }
+
+Al posto di SOSTITUIRE_SSID, indichiamo il nome della WiFi alla quale Raspberry Pi 4 dovrà automaticamente collegarsi; la stringa SOSTITUIRE_PASSWORD va sostituita con la password corretta per l'accesso alla rete WiFi specificata. Noi per sicurezza collegheremo, comunque, il Raspberry al router tramite cavo ethernet.
+Estraiamo la scheda SD dal PC e inseriamola nello slot posto al di sotto del Raspberry Pi 4.<br>
+<br>
+Colleghiamo il cavo ethernet dal router al Raspberry, assicuriamoci che la sd sia inserita correttamente e dopo aver collegato il Raspberry alla rete elettrica aspettiamo qualche secondo.
+<br>
+Per accedere alla sessmione ssh è necessario sapere l'indirizzo IP privato assegnato dal router al Raspberry Pi4. Per conoscere l'indirizzo IP digitare sul browser del proprio pc 192.168.1.1 e accedere con le credenziali (se non è mai stato effetuato l'accesso cercare sul browser "user e password router linkem"). Nella sezione network del menù, all'interno di Stato, scorrendo in fondo alla pagina sarà visibile l'indirizzo IP del Raspberry (il seguente record potrebbe avere "ubuntu" come nome host).<br>
+Venuti a conoscenza dell'ip del raspberry entrare su Putty, scaricabile dal sito ufficiale (https://www.putty.org/) e digitare l'ip nella relativa casella, e verificare che la porta sia la "22". <br>
+Al primo accesso verrà richiesto username e password (inserire "ubuntu" sia come password che come username). Verrà poi richiesto all'utente di inserire una password personale per l'accesso. Consigliamo di cambiare hostname con il comando:<br>
+
+>sudo hostnamectl set-hostname nomepc
+> 
+>sudo reboot
+>
+
+---------------------------------------------------------------------
+
+## INSTALLAZIONE PACCHETTI
+### tempo d'esecuzione: 5 min
+:warning: pacchetto APACHE2 per scaricare server APACHE2 con FileZilla<br>
+:warning: pacchetto OPENSSH-SERVER per comandi FTP con FileZilla<br>
+:warning: pacchetto VSFTPD per comandi FTP con FileZilla
+
+>sudo apt update
+>
+>sudo apt-get install apache2
+>
+>sudo apt install openssh-server
+>
+>sudo apt-get install vsftpd
+
+### checkpoint :white_check_mark: <br>
+controllare connettività dopo aver installato APACHE2
+>digitare ip su barra di ricerca nel browser
+>
+
+---------------------------------------------------------------------
+
+## CONFIGURAZIONE DI RETE
+### tempo d'esecuzione: 10 min
+:warning: in caso di virtualizzazione è necessario porre scheda in bridge
+
+>cd /etc/netplan/00-installer-config.yaml
+
+
+>           network:
+>                 ethernets:
+>                       eth0:
+>                              dhcp4: false
+>                              optional: false
+>                              addresses: [192.168.1.2/24]
+>                              gateway4: 192.168.1.1
+>                              nameservers:
+>                              addresses: [8.8.8.8, 8.8.4.4]
+>                 version: 2
+
+
+Per accettare configurazione appena impostata: <br>
+>sudo netplan try
+
+>     [sudo] password for adminuser:
+>     Warning: Stopping systemd-networkd.service, but it can still be activated by:
+>       systemd-networkd.socket
+>     Do you want to keep these settings?
+>
+>
+>     Press ENTER before the timeout to accept the new configuration
+>
+>
+>     Changes will revert in 119 seconds
+>     Configuration accepted.
+
+### checkpoint :white_check_mark: <br>
+controllare corretta configurazione di rete: <br>
+>ip address
+>
+
+---------------------------------------------------------------------
+
+## CREAZIONE UTENTI
+### tempo d'esecuzione: 5 min
+:warning: Per questione di semplicità creeremo gli utenti solo dopo aver creato il sito. <br>
+
+>sudo useradd -s /bin/bash -d /var/www/SitoX -m usersitoX
+>
+>sudo passwd usersitoX
+>
+
+### checkpoint :white_check_mark: <br>
+controllare inserimento corretto per accesso unico alla cartella
+>exit
+>
+>         accedere con user e passwd inserite
+>
+
+---------------------------------------------------------------------
+
+## CREAZIONE SPAZIO SITI
+### tempo d'esecuzione: 5 min
+:warning: Lo spazio dei siti può essere creato dall'utente creato precedentemente da root.<br>
+
+>sudo mkdir /var/www/ SitoA
+>
+>sudo mkdir /var/www/SitoA log
+>
+>sudo mkdir /var/www/SitoA web
+>
+
+--------------------------------------------------------------------
+
+## CONTROLLO FILE APACHE2
+### tempo d'esecuzione: 2 min
+:warning: controllare che vengano gestiti i file dentro apache2.<br>
+
+>cat cd /etc/apache2/apache2.conf
+>
+
+>
+>       <>Directory /var/www/>
+>            Options Indexes FollowSymLinks
+>            AllowOverride None
+>            Require all granted
+>       </Directory>
+>
+
+---------------------------------------------------------------------
+
+## CREAZIONE FILE DI CONFIGURAZIONE DEL SITO
+### tempo d'esecuzione: 5 min
+
+>cd /etc/apache2/sites-available
+>
+>sudo cp 000-deafult.conf 001-default.conf
+>
+>sudo nano 001-deafult.conf
+>
+>       DocumentRoot /var/www/SitoA
+>
+>       ServerName dominio
+>
+>       ErrorLog /var/www/SitoA/log/error.log
+>
+>       CustomLog /var/www/SitoA/log/access.log combined
+>
+
+---------------------------------------------------------------------
+
+## CREAZIONE SITO
+### tempo d'esecuzione: 15 min
+
+dopo aver creato un file index.html nella cartella web dello spazio personale
+e dopo aver creato la cartella log (var/www/Sito/web e var/www/Sito/log):<br>
+
+>systemctl reload apache2
+>
+
+### checkpoint :white_check_mark: passaggi avvenuti con successo:
+>         Authentication is required to reload 'apache2.service'.
+>         Authenticating as: adminuser
+>         Password:
+>         ==== AUTHENTICATION COMPLETE ===
+>
+
+>sudo a2ensite 001-default.conf
+>
+
+>         Enabling site hm18858-default.
+>         To activate the new configuration, you need to run:
+>           systemctl reload apache2
+
+### :warning: passaggi non avvenuti con successo
+
+>         [sudo] password for adminuser:
+>         Job for apache2.service failed.
+>         See "systemctl status apache2.service" and "journalctl -xe" for details.
+>
+
+visonare utente che ha generato errore: <br>
+>apache2ctl configtest
+>
+
+disattivare file dell'utente incriminato:
+>sudo a2dissite <fileconf.conf>
+>
+
+>         Site hm18858-default disabled.
+>         To activate the new configuration, you need to run:
+>           systemctl reload apache2
+
+### checkpoint :white_check_mark: controllo finale sul raggiungimento del sito <br>
+comandi utili:
+>digitare sul browser servername
+>
+>apache2 is not active -> sudo systemctl enable apache2
+>
+>cat /var/log/syslog
+>
+>history | grep enable
+>
+>sudo systemctl restart apache2.service
+>
+>sudo systemctl reload apache2
+>
+  
+--------------------------------------------------------------------
 
 ## CERTIFICATO SSL
 ### tempo d'esecuzione: 15 min
@@ -119,227 +351,16 @@ Per il nostro certificato SSL useremo i comandi di Certbot lets-encrypt dal sito
 >            Congratulations, all simulated renewals succeeded:
 >              /etc/letsencrypt/live/waltermarconi.it/fullchain.pem (success)
 
+### checkpoint :white_check_mark: <br>
+Andando sul browser e digitando il nostro dominio, dopo aver cliccato invio dovremo vedere il lucchetto chiuso
+che indica che il nostro sito è protetto. Infine possiamo scrivere http://dominio e assicurarci che il dominio
+venga reindirizzato con lo standard https.<br>
 
 ---------------------------------------------------------------------
 
-## DOWNLOAD SISTEMA OPERATIVO
-### tempo d'esecuzione: 20 min
-A questo punto sarà necessario scaricare il S.O., in questo caso Ubuntu Server 20.04.1 LTS
-(long term support) a 64 bit dal sito ufficiale (https://ubuntu.com/download/raspberry-pi).
-Una volta scaricato un file .zip con all'interno l'immagine ISO del S.O. scelto, inserire la scheda micro sd con il relativo adattatore per pc all'interno del nostro
-pc e aprire l'applicazione Rufus.
-All'interno della schermata di Rufus selezionare l'immagine ISO, cliccare AVVIO e aspettare. La scheda sd verrà formattata.<br>
-<br>
-### CHECKPOINT :white_check_mark: <br>
-Al termine del caricamento cliccare CHIUDI. Usiamo, poi, la combinazione di tasti Windows+R e scriviamo diskmgmt.msc per assicurarci che siano state create due partizioni una (BOOT) formattata FAT32, l'altra non leggibile in Windows.<br>
-<br>
-Nella finestra Questo PC di Windows, entriamo nella scheda sd e clicchiamo con il tasto destro in un'area libera della cartella, scegliamo Nuovo, Documento di testo. Assegnamo al file così creato il nome ssh assicurandovi che non sia presente l'estensione .txt<br>
-Allo stesso modo, creiamo un file wpa_supplicant.conf nella partizione BOOT inserendovi al suo interno quanto segue (può essere aperto con un qualunque editor di testo, va bene anche il Blocco Note di Windows):
-
->           country=IT
->           ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
->           update_config=1
->
->           network={
->           scan_ssid=1
->           ssid="SOSTITUIRE_SSID"
->           psk="SOSTITUIRE_PASSWORD"
->           }
-
-Al posto di SOSTITUIRE_SSID, indichiamo il nome della WiFi alla quale Raspberry Pi 4 dovrà automaticamente collegarsi; la stringa SOSTITUIRE_PASSWORD va sostituita con la password corretta per l'accesso alla rete WiFi specificata. Noi per sicurezza collegheremo, comunque, il Raspberry al router tramite cavo ethernet.
-Estraiamo la scheda SD dal PC e inseriamola nello slot posto al di sotto del Raspberry Pi 4.<br>
-<br>
-Colleghiamo il cavo ethernet dal router al Raspberry, assicuriamoci che la sd sia inserita correttamente e dopo aver collegato il Raspberry alla rete elettrica aspettiamo qualche secondo.
-<br>
-Per accedere alla sessmione ssh è necessario sapere l'indirizzo IP privato assegnato dal router al Raspberry Pi4. Per conoscere l'indirizzo IP digitare sul browser del proprio pc 192.168.1.1 e accedere con le credenziali (se non è mai stato effetuato l'accesso cercare sul browser "user e password router linkem"). Nella sezione network del menù, all'interno di Stato, scorrendo in fondo alla pagina sarà visibile l'indirizzo IP del Raspberry (il seguente record potrebbe avere "ubuntu" come nome host).<br>
-Venuti a conoscenza dell'ip del raspberry entrare su Putty, scaricabile dal sito ufficiale (https://www.putty.org/) e digitare l'ip nella relativa casella, e verificare che la porta sia la "22". <br>
-Al primo accesso verrà richiesto username e password (inserire "ubuntu" sia come password che come username). Verrà poi richiesto all'utente di inserire una password personale per l'accesso. Consigliamo di cambiare hostname con il comando:<br>
-
->sudo hostnamectl set-hostname nomepc
-> 
->sudo reboot
->
----------------------------------------------------------------------
-
-## INSTALLAZIONE PACCHETTI :bust_in_silhouette: Admin
-:warning: pacchetto APACHE2 per scaricare server APACHE2 con FileZilla<br>
-:warning: pacchetto OPENSSH-SERVER per comandi FTP con FileZilla<br>
-:warning: pacchetto VSFTPD per comandi FTP con FileZilla
-
->sudo apt update
->
->sudo apt-get install apache2
->
->sudo apt install openssh-server
->
->sudo apt-get install vsftpd
-
-### CHECKPOINT :white_check_mark: <br>
-controllare connettività dopo aver installato APACHE2
->digitare ip su barra di ricerca nel browser
->
-
----------------------------------------------------------------------
-
-## CONFIGURAZIONE DI RETE :bust_in_silhouette: Admin
-:warning: in caso di virtualizzazione è necessario porre scheda in bridge
-
->cd /etc/netplan/00-installer-config.yaml
-
-
->           network:
->                 ethernets:
->                       eth0:
->                              dhcp4: false
->                              optional: false
->                              addresses: [192.168.1.2/24]
->                              gateway4: 192.168.1.1
->                              nameservers:
->                              addresses: [8.8.8.8, 8.8.4.4]
->                 version: 2
-
-
-Per accettare configurazione appena impostata: <br>
->sudo netplan try
-
->     [sudo] password for adminuser:
->     Warning: Stopping systemd-networkd.service, but it can still be activated by:
->       systemd-networkd.socket
->     Do you want to keep these settings?
->
->
->     Press ENTER before the timeout to accept the new configuration
->
->
->     Changes will revert in 119 seconds
->     Configuration accepted.
-
-### CHECKPOINT :white_check_mark: <br>
-controllare corretta configurazione di rete: <br>
->ip address
->
-
----------------------------------------------------------------------
-
-## CREAZIONE UTENTI :bust_in_silhouette: Admin
->sudo useradd -s /bin/bash -d /var/www/SitoX -m usersitoX
->
->sudo passwd usersitoX
->
-
-### CHECKPOINT :white_check_mark: <br>
-controllare inserimento corretto per accesso unico alla cartella
->exit
->
->         accedere con user e passwd inserite
->
-
----------------------------------------------------------------------
-
-## CREAZIONE SPAZIO SITI :busts_in_silhouette: Admin, Users
-:warning: Lo spazio dei siti può essere creato dall'utente creato precedentemente da root
->sudo mkdir /var/www/ SitoA
->
->sudo mkdir /var/www/SitoA log
->
->sudo mkdir /var/www/SitoA web
->
-
---------------------------------------------------------------------
-
-## CONTROLLO FILE APACHE2 :bust_in_silhouette: Admin
-:warning: controllare che vengano gestiti i file dentro apache2
-
->cat cd /etc/apache2/apache2.conf
->
-
->
->       <>Directory /var/www/>
->            Options Indexes FollowSymLinks
->            AllowOverride None
->            Require all granted
->       </Directory>
->
-
----------------------------------------------------------------------
-
-## CREAZIONE FILE DI CONFIGURAZIONE DEL SITO :bust_in_silhouette: Admin
->cd /etc/apache2/sites-available
->
->sudo cp 000-deafult.conf 001-default.conf
->
->sudo nano 001-deafult.conf
->
->       DocumentRoot /var/www/SitoA
->
->       ServerName sitoa-113.virtual.marconi
->
->       ErrorLog /var/www/SitoA/log/error.log
->
->       CustomLog /var/www/SitoA/log/access.log combined
->
-
----------------------------------------------------------------------
-
-## CREAZIONE SITO :busts_in_silhouette: Users -> Admin
-
-dopo aver creato un file index.html nella cartella web dello spazio personale
-e dopo aver creato la cartella log (var/www/Sito/web e var/www/Sito/log):
->systemctl reload apache2
->
-
-### :white_check_mark: passaggi avvenuti con successo:
->         Authentication is required to reload 'apache2.service'.
->         Authenticating as: adminuser
->         Password:
->         ==== AUTHENTICATION COMPLETE ===
->
-
->sudo a2ensite 001-default.conf
->
-
->         Enabling site hm18858-default.
->         To activate the new configuration, you need to run:
->           systemctl reload apache2
-
-### :warning: passaggi non avvenuti con successo
-
->         [sudo] password for adminuser:
->         Job for apache2.service failed.
->         See "systemctl status apache2.service" and "journalctl -xe" for details.
->
-
-visonare utente che ha generato errore: <br>
->apache2ctl configtest
->
-
-disattivare file dell'utente incriminato:
->sudo a2dissite <fileconf.conf>
->
-
->         Site hm18858-default disabled.
->         To activate the new configuration, you need to run:
->           systemctl reload apache2
-
-### controllo finale sul raggiungimento del sito <br>
-comandi utili:
->digitare sul browser servername
->
->apache2 is not active -> sudo systemctl enable apache2
->
->cat /var/log/syslog
->
->history | grep enable
->
->sudo systemctl restart apache2.service
->
->sudo systemctl reload apache2
->
-  
---------------------------------------------------------------------
-
-## CONFIGURAZIONE FTP :bust_in_silhouette: Admin
-:warning: configurare file vsftpd per usufruire dei comandi FTP da remoto<br>
+## CONFIGURAZIONE FTP
+### tempo d'esecuzione: 10 min
+:warning: configurare file vsftpd per usufruire dei comandi FTP da remoto e scambiare file.<br>
 >sudo nano /etc/vsftpd.conf
 >
 
