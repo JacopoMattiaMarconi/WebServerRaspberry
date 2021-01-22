@@ -20,6 +20,7 @@ Per questo progetto abbiamo bisogno di:
 [INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
 [INSTALLAZIONE RUFUS](#INSTALLAZIONE-RUFUS)<br>
 [DOWNLOAD SISTEMA OPERATIVO](#DOWNLOAD-SISTEMA-OPERATIVO)<br>
+[PERSONALIZZAZIONE HOSTNAME](#PERSONALIZZAZIONE-HOSTNAME)<br>
 [INSTALLAZIONE PACCHETTI NECESSARI](#INSTALLAZIONE-PACCHETTI)<br>
 [CONFIGURAZIONE DI RETE](#CONFIGURAZIONE-DI-RETE)<br>
 [CREAZIONE UTENTI](#CREAZIONE-UTENTI)<br>
@@ -88,6 +89,28 @@ Al primo accesso verrà richiesto username e password (inserire "ubuntu" sia com
 > 
 >sudo reboot
 >
+
+---------------------------------------------------------------------
+
+## PERSONALIZZAZIONE HOSTNAME
+### tempo d'esecuzione: 5 min
+
+>sudo hostnamectl set-hostname nuovohostname
+>
+>sudo reboot
+>
+
+oppure 
+
+>sudo nano /etc/hostname
+>
+>sudo nano /etc/hosts
+>
+>sudo reboot
+>
+
+### checkpoint :white_check_mark: <br>
+All'avvio l'hostname sarà cambiato
 
 ---------------------------------------------------------------------
 
@@ -357,6 +380,63 @@ che indica che il nostro sito è protetto. Infine possiamo scrivere http://domin
 venga reindirizzato con lo standard https.<br>
 
 ---------------------------------------------------------------------
+
+## INSTALLAZIONE SAMBA
+### tempo d'esecuzione: 15 min
+Un file server Samba consente la condivisione di file tra diversi sistemi operativi su una rete.<br>
+Ti consente di accedere ai file del desktop da un laptop e di condividere file con utenti Windows e macOS.<br>
+<bR>
+Di cosa avremo bisogno:
+- Ubuntu 16.04 LTS
+- Una rete locale (LAN) su cui condividere file
+
+>sudo apt update
+>
+>sudo apt install samba
+>
+>whereis samba
+>
+
+L'output dovrebbe essere il seguente: :white_check_mark:
+>     samba: /usr/sbin/samba /usr/lib/samba /etc/samba /usr/share/samba /usr/share/man/man7/samba.7.gz /usr/share/man/man8/samba.8.gz
+>
+
+>mkdir /home/<username>/sambashare/
+>
+>sudo nano /etc/samba/smb.conf
+
+File di configurazione: 
+>     [sambashare]
+>
+>         comment = Samba on Ubuntu
+>
+>         path = /home/username/sambashare
+>
+>         read only = no
+>
+>         browsable = yes
+>
+
+>sudo service smbd restart
+>
+>sudo ufw allow samba
+>
+>sudo smbpasswd -a username
+>
+
+Su Ubuntu: apri il file manager predefinito e fai clic su Connetti al server, quindi inserisci:<br>
+>smb://ip-address/sambshare
+>
+
+Su macOS: nel menu Finder, fai clic su Vai> Connetti al server, quindi inserisci:<br>
+>smb://ip-address/sambshare
+>
+
+Su Windows, apri File Manager e modifica il percorso del file in:<br>
+>\\ip-address\sambashare
+>
+
+------------------------------------------------------------
 
 ## CONFIGURAZIONE FTP
 ### tempo d'esecuzione: 10 min
