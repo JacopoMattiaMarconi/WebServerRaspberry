@@ -16,6 +16,7 @@ Per questo progetto abbiamo bisogno di:
 >            cavo ethernet (opzionale)
 >            software Rufus installato sul pc
 >            software Putty installato sul pc
+>            software winSCP installato sul pc (usato per trasferire i file da windows al server)
 
 [INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
 [INSTALLAZIONE RUFUS](#INSTALLAZIONE-RUFUS)<br>
