@@ -420,6 +420,8 @@ File di configurazione:
 
 >sudo service smbd restart
 >
+>sudo service nmbd restart
+>
 >sudo ufw allow samba
 >
 >sudo smbpasswd -a username
