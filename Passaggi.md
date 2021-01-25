@@ -1,5 +1,5 @@
 # Creazione web server con Raspberry Pi4 con Linux Ubuntu Server e router Linkem :computer:
-L'obiettivo finale sarà quello di creare un sito raggiungibile da remoto.<br>
+L'obiettivo finale sarà quello di creare un sito raggiungibile da remoto e un disco di rete NAS.<br>
 La configurazione iniziale del Raspberry verrà effettuata in maniera headless, tramite pc
 portatile e connessione SSH.<br>
 <br>
@@ -17,6 +17,7 @@ Per questo progetto abbiamo bisogno di:
 >            software Rufus installato sul pc
 >            software Putty installato sul pc
 >            software winSCP installato sul pc (usato per trasferire i file da windows al server)
+>            ssd o hard disk > 256 GB
 
 [INSTALLAZIONE RASPBERRY PI4](#INSTALLAZIONE-RASPBERRY-PI4)<br>
 [INSTALLAZIONE RUFUS](#INSTALLAZIONE-RUFUS)<br>
@@ -30,7 +31,9 @@ Per questo progetto abbiamo bisogno di:
 [CREAZIONE FILE DI CONFIGURAZIONE DEL SITO](#CREAZIONE-FILE-DI-CONFIGURAZIONE-DEL-SITO)<br>
 [CREAZIONE SITO](#CREAZIONE-SITO)<br>
 [CERTIFICATO SSL](#CERTIFICATO-SSL)<br>
+[INSTALLAZIONE SAMBA](#INSTALLAZIONE-SAMBA)<br>
 [CONFIGURAZIONE FTP](#CONFIGURAZIONE-FTP)<br>
+[CREAZIONE DISCO DI RETE NAS](#CREAZIONE-DISCO-DI-RETE-NAS)<br>
 
 
 ## INSTALLAZIONE RASPBERRY PI4
@@ -496,4 +499,21 @@ Su Windows, apri File Manager e modifica il percorso del file in:<br>
 >     session_support=YES
 >
 >     log_ftp_protocol=YES
+>
+
+---------------------------------------------------------------------
+
+## CREAZIONE DISCO DI RETE NAS
+### tempo d'esecuzione: 15 min
+:warning: Per cause di forze maggiori non configureremo un array RAID.
+La scheda ssd o hard disk esterno verrà formattato. Prima dell'operazione è necessario spostare i file
+importanti memorizzati su di esso su un altro supporto di memoria.<br>
+Innanzitutto è bene controllare gli aggiornamenti dei pacchetti già installati.
+
+>sudo apt get update && sudo apt -y upgrade
+>
+
+Digitando il seguente comando si otterrà la lista delle unità USB collegate al Raspberry Pi4.
+
+>sudo blkid
 >
