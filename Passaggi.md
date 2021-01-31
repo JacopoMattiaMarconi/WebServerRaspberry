@@ -353,7 +353,7 @@ Per il nostro certificato SSL useremo i comandi di Certbot lets-encrypt dal [sit
 >            Include /etc/letsencrypt/options-ssl-apache.conf
 >            </VirtualHost>
 
-
+            
 >sudo certbot --apache
 >
 >sudo certbot renew --dry-run
@@ -517,3 +517,81 @@ Digitando il seguente comando si otterrà la lista delle unità USB collegate al
 
 >sudo blkid
 >
+
+>sudo apt update && sudo apt -y upgrade
+>
+>sudo apt-get install mdadm -y
+>
+
+### RAID 1<br>
+
+>sudo mdadm --create --verbose /dev/md/vol1 --level=1 --raid-devices=2 /dev/sda1 /dev/sdb1
+>
+
+Confermare RAID, salvare configurazione e formattare con ext4 <br>
+
+>sudo mdadm --detail /dev/md/vol1
+>
+>sudo -i
+>
+>mdadm --detail --scan >> /etc/mdadm/mdadm.conf
+>
+>exit
+>
+
+### checkpoint :white_check_mark: <br>
+Digitando:<br>
+
+>sudo nano /etc/mdadm/mdadm.conf
+>
+
+e scorrendo il file, si dovrebbe trovare il riferimento: <br>
+
+>         ARRAY /dev/md/vol1
+>
+
+formattiamo e creiamo cluster grandi 4096 KB:<br>
+
+>sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/md/vol1
+>
+
+montiamo il volume e verifichiamo:<br>
+
+>sudo mount /dev/md/vol1 /mnt
+>
+>sudo blkid
+>
+>sudo nano /etc/fstab
+>
+
+e modifichiamo:<br>
+
+>       UUID="uuid_vol_raid_chetroviamoconBLKID" /mnt ext4 defaults 0 0
+>
+
+### Samba per condividere cartella in locale <br>
+
+>sudo chown -R "utente" /mnt
+>
+>sudo chmod -R 0777 /mnt
+>
+>sudo smbpasswd -a "utente"
+>
+>sudo nano /etc/samba/smb.conf
+>
+
+in fondo al file scriviamo:
+
+>             [NAS]
+>             path = /mnt
+>             comment = Raspberry Pi NAS
+>             force users = "utente"
+>             writeable = yes 
+>             browseable = yes
+>             create mask = 0777
+>             directory mask = 0777
+>             public = no
+
+>sudo systemctl restart smbd
+>
+>sudo systemctl restart nmbd 
