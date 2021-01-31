@@ -331,53 +331,71 @@ Per il nostro certificato SSL useremo i comandi di Certbot lets-encrypt dal [sit
 >sudo nano /etc/apache2/sites-enabled/000-default.conf
 
 
->            <VirtualHost *:80>
->                    ServerAdmin webmaster@localhost
->                    Redirect / https://www.waltermarconi.it
->                    ErrorLog /var/www/MarconiWalter/log/error.log
->                    CustomLog /var/www/MarconiWalter/log/access.log combined
->                    ErrorLog ${APACHE_LOG_DIR}/error.log
->                    CustomLog ${APACHE_LOG_DIR}/access.log combined
->            RewriteEngine on
->            RewriteCond %{SERVER_NAME} =waltermarconi.it
->            RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
->            </VirtualHost>
+>             <VirtualHost *:80>
+>                  # The ServerName directive sets the request scheme, hostname and port that
+>                  # the server uses to identify itself. This is used when creating
+>                  # redirection URLs. In the context of virtual hosts, the ServerName
+>                  # specifies what hostname must appear in the request's Host: header to
+>                  # match this virtual host. For the default virtual host (this file) this
+>                  # value is not decisive as it is used as a last resort host regardless.
+>                  # However, you must set it for any further virtual host explicitly.
+>                  #ServerName www.example.com
 >
->            <VirtualHost *:443>
->                    ServerAdmin webmaster@localhost
->                    DocumentRoot /var/www/MarconiWalter/web
->                    SSLEngine on
->                    ServerName waltermarconi.it
->            SSLCertificateFile /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
->            SSLCertificateKeyFile /etc/letsencrypt/live/waltermarconi.it/privkey.pem
->            Include /etc/letsencrypt/options-ssl-apache.conf
->            </VirtualHost>
+>                  ServerAlias dominio
+>                  ServerName www.dominio
+>                  ServerAdmin webmaster@localhost
+>                  Redirect / https://www.dominio
+>                  ErrorLog /var/www/utente/log/error.log
+>                  CustomLog /var/www/utente/log/access.log combined
+>
+>                  # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+>                  # error, crit, alert, emerg.
+>                  # It is also possible to configure the loglevel for particular
+>                  # modules, e.g.
+>                  #LogLevel info ssl:warn
+>
+>                  ErrorLog ${APACHE_LOG_DIR}/error.log
+>                  CustomLog ${APACHE_LOG_DIR}/access.log combined
+>
+>                  # For most configuration files from conf-available/, which are
+>                  # enabled or disabled at a global level, it is possible to
+>                  # include a line for only one particular virtual host. For example the
+>                  # following line enables the CGI configuration for this host only
+>                  # after it has been globally disabled with "a2disconf".
+>                  #Include conf-available/serve-cgi-bin.conf
+>             RewriteEngine on
+>             RewriteCond %{SERVER_NAME} =dominio
+>             RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+>             </VirtualHost>
 
-            
+:warning: dopo aver svolto i passaggi per la certificazione verrà creato un file di
+configurazione /etc/apache2/sites-enabled/000-default-le-ssl.conf <br>
+Assicurasi che le impostazioni siano corrette.<br>
+
 >sudo certbot --apache
 >
 >sudo certbot renew --dry-run
 >
 
 
->            Processing /etc/letsencrypt/renewal/waltermarconi.it.conf
+>            Processing /etc/letsencrypt/renewal/dominio.conf
 >            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 >            Cert not due for renewal, but simulating renewal for dry run
 >            Plugins selected: Authenticator apache, Installer apache
->            Simulating renewal of an existing certificate for waltermarconi.it
+>            Simulating renewal of an existing certificate for dominio
 >            Performing the following challenges:
->            http-01 challenge for waltermarconi.it
+>            http-01 challenge for dominio
 >            Waiting for verification...
 >            Cleaning up challenges
 >
 >            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 >            new certificate deployed with reload of apache server; fullchain is
->            /etc/letsencrypt/live/waltermarconi.it/fullchain.pem
+>            /etc/letsencrypt/live/dominio/fullchain.pem
 >            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 >
 >            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 >            Congratulations, all simulated renewals succeeded:
->              /etc/letsencrypt/live/waltermarconi.it/fullchain.pem (success)
+>              /etc/letsencrypt/live/dominio/fullchain.pem (success)
 
 ### checkpoint :white_check_mark: <br>
 Andando sul browser e digitando il nostro dominio, dopo aver cliccato invio dovremo vedere il lucchetto chiuso
